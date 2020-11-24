@@ -15,7 +15,7 @@ class PicsSpider(CrawlSpider):
         self.rules = [
             Rule(LinkExtractor(allow=[f'.*/r/{subreddit}/\?count.*']),
                  callback='parse',
-                 follow=False),
+                 follow=True),
         ]
         super(PicsSpider, self).__init__(**kwargs)
 
