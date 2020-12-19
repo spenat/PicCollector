@@ -8,7 +8,7 @@ def is_tool(name):
     return which(name) is not None
 
 
-class PCController:
+class Controller:
 
     def run_spider(self):
         self.set_statusbar_text('Scraping pages, please wait...')

@@ -2,7 +2,7 @@ import json
 import os
 
 
-class PCModel:
+class Model:
 
     page = 1
     subreddit = 'pics'

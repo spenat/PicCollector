@@ -2,9 +2,9 @@ import os
 import _tkinter
 import tkinter as tk
 from concurrent.futures import ThreadPoolExecutor
-from gui.controller import PCController as Controller
-from gui.view import PCView as View
-from gui.model import PCModel as Model
+from gui.controller import Controller
+from gui.view import View
+from gui.model import Model
 
 
 class PicCollector(Model, View, Controller):

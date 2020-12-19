@@ -6,7 +6,7 @@ from  tkinter import filedialog
 from PIL import Image, ImageTk
 
 
-class PCView:
+class View:
 
     thumbs = []
     page_counter = None
