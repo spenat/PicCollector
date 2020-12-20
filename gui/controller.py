@@ -9,11 +9,10 @@ def is_tool(name):
 
 
 class Controller:
-
     def run_spider(self):
         self.set_statusbar_text('Scraping pages, please wait...')
         if self.subreddit == 'all':
-            for subreddit in self.subreddits:  # All sites except 'all'
+            for subreddit in self.subreddits:
                 if subreddit != 'all':
                     self.scrape_site(subreddit)
         else:
@@ -22,7 +21,7 @@ class Controller:
         self.set_statusbar_text('Scraping done!')
 
     def scrape_site(self, subreddit):
-        json_name = os.path.join(self.this_directory, self.json_dir)
+        json_name = os.path.join(self.root_directory, self.json_dir)
         self.log(json_name)
         time.sleep(3)
         json_name = os.path.join(json_name, self.subreddits[subreddit]['json'])
@@ -30,22 +29,25 @@ class Controller:
         if os.path.isfile(json_name):
             self.log('its a file!\nremoving file {json_name}')
             os.remove(json_name)
-        argument = 'subreddit={}'.format(self.subreddits[self.subreddit]['url_key'])
+        argument = 'subreddit={}'.format(
+            self.subreddits[self.subreddit]['url_key'])
         self.log(argument)
-        command_list = ['scrapy', 'crawl',
-            'pics', '-o',
-            json_name,
-            '-a', argument]
+        command_list = [
+            'scrapy', 'crawl', 'pics', '-o', json_name, '-a', argument
+        ]
         self.log(command_list)
-        proc = sp.run(command_list, cwd=self.this_directory)
+        proc = sp.run(command_list, cwd=self.root_directory)
         self.log("done!")
         self.log(f'proc: {proc}')
         time.sleep(3)
         if hasattr(self, 'dbmgr'):
             try:
-                self.dbmgr.load_file(json_name, site, category, keyword_name)
-            except Exception as e:
-                self.log(f'got exception from load_file: {e}')
+                json_filename = os.path.join(
+                    self.root_directory, self.json_dir,
+                    self.subreddits[self.subreddit]['json'])
+                self.dbmgr.load_file(json_filename, self.subreddit)
+            except Exception as exc:
+                self.log(f'got exception from load_file: {exc}')
         if self.load_imagedata():
             self.update_thumbs()
 
@@ -62,5 +64,5 @@ class Controller:
         else:
             self.log('No file')
             return
- 
+
         proc = sp.Popen(command_list)

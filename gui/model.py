@@ -11,8 +11,7 @@ class Model:
     debug = False
 
     def load_model(self):
-
-        self.subreddits_filname = os.path.join(self.this_directory,
+        self.subreddits_filname = os.path.join(self.root_directory,
                                                ".subreddits.cfg")
         self.subreddits = self.read(self.subreddits_filname)
         self.log(self.subreddits)
@@ -23,8 +22,8 @@ class Model:
             with open(filename, 'r+') as fo:
                 subreddits = fo.read()
             subreddits = [s for s in subreddits.split('\n') if s != '']
-        except FileNotFoundError as e:
-            self.log(f'{e}')
+        except FileNotFoundError as exc:
+            self.log(f'{exc}')
         subreddits = {
             ' '.join(subreddit.split('-')).title(): {
                 'json': subreddit + '.json',
@@ -35,12 +34,9 @@ class Model:
         self.log(f'{subreddits}')
         return subreddits
 
-    def get_keywords_dict(self, category, site_name="all"):
-        return self.load_no_videos(self.read(self.filenames[self.category]))
-
     def load_imagedata(self):
         self.page = 1
-        filename = os.path.join(self.this_directory, self.json_dir,
+        filename = os.path.join(self.root_directory, self.json_dir,
                                 self.subreddits[self.subreddit]['json'])
         self.log(f'filename: {filename}')
         success = False

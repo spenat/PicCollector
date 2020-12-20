@@ -167,10 +167,10 @@ class View:
                 if len(image_meta['images']) > 0:
                     image_path = image_meta['images'][0]['path']
                     thumb_path = os.path.join('thumbs/small/', image_path.split('/')[-1])
-                    img_path = os.path.join(self.this_directory, 'pic_collector/images/', thumb_path)
-                    full_image = os.path.join(self.this_directory, 'pic_collector/images/', image_path)
+                    img_path = os.path.join(self.root_directory, 'pic_collector/images/', thumb_path)
+                    full_image = os.path.join(self.root_directory, 'pic_collector/images/', image_path)
                 else:
-                    img_path = os.path.join(self.this_directory, 'pic_collector/not-found.gif')
+                    img_path = os.path.join(self.root_directory, 'pic_collector/not-found.gif')
                     if len(image_meta['image_urls']) > 0:
                         full_image = image_meta['image_urls'][0]
                     else:
