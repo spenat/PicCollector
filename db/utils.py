@@ -48,13 +48,3 @@ def create_subs_from_cfg(filename, session):
         db_subreddits.append(create_subreddit(sub))
     session.add_all(db_subreddits)
     session.commit()
-
-
-def create_thumb(image_data, site):
-    thumb = Thumb()
-    thumb.video_url = image_data['video']
-    thumb.checksum = image_data['images'][0]['checksum']
-    thumb.image_url = image_data['image_urls'][0]
-    thumb.path = image_data['images'][0]['path']
-    thumb.site = site
-    return thumb
