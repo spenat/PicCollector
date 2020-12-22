@@ -21,7 +21,6 @@ class Model:
     db_type = "sqlite"
 
     def __init__(self):
-        print('gui_model init')
         self.dburl = Model.load_dburl()
         self.log(self.dburl)
         self.dbmgr = DatabaseManager(self.dburl, echo=True)

@@ -14,7 +14,6 @@ class Subreddit(Base):
     name = Column(String)
     filename = Column(String)
     url_key = Column(String)
-    # many to many categories
 
 
 class Picture(Base):

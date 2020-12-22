@@ -1,13 +1,10 @@
 import json
-import time
 from sqlalchemy import create_engine, func
 from sqlalchemy.orm import sessionmaker, scoped_session
 from . import utils
 from .database_model import Subreddit, Picture
 
 # This is the database manager. Its a collection of useful database queries
-# dburl = "sqlite:///thumbdb.sqlite"
-# engine = create_engine(dburl, encoding="utf-8", echo=True)
 
 
 class DatabaseManager():
@@ -39,7 +36,7 @@ class DatabaseManager():
             'json': sub.filename,
             'url_key': sub.url_key
             }
-            for sub in s_query # s.query(Subreddit).all()
+            for sub in s_query
         }
         return subreddit_dict
 

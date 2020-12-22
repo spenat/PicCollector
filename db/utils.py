@@ -8,7 +8,7 @@ from .gui_model import Model
 
 
 dburl = Model.load_dburl()
-this_directory = os.path.dirname(os.path.realpath(__file__))
+# this_directory = os.path.dirname(os.path.realpath(__file__))
 
 
 def create_database():
@@ -23,7 +23,7 @@ def create_database():
 def database_exist():
     # return which(filename) is not None
     print(f'dburl: {dburl}')
-    exists = os.path.exists("pcdb.sqlite") # os.path.join(this_directory, "pcdb.sqlite"))
+    exists = os.path.exists("pcdb.sqlite")
     print(f'exists: {exists}')
     return exists
 
