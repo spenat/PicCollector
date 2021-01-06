@@ -57,12 +57,13 @@ class View:
         if hasattr(self, 'subreddit_select') and self.subreddit_select:
             self.subreddit_select.destroy()
         select_list = sorted(list(self.subreddits))
+        subreddit_index = select_list.index(self.subreddit) + 1
         first_sub = select_list[0]
         if 'quantity' in self.subreddits[first_sub]:
             select_list = [s + ' (' + str(self.subreddits[s]['quantity']) + ')' for s in select_list]
         select_list = ['Add subreddit'] + select_list
         self.subreddit_select = ttk.Combobox(self.root, values=select_list, state=['readonly'])
-        self.subreddit_select.current(newindex=1)
+        self.subreddit_select.current(newindex=subreddit_index)
         self.subreddit_select.grid(row=0, column=0)
         self.subreddit_select.bind('<<ComboboxSelected>>', self.set_subreddit)
 
