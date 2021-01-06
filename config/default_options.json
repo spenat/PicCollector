@@ -1,0 +1,7 @@
+{
+    "viewer": "feh",
+    "viewer_alts": ["feh", "gqview", "native", "eog"],
+    "storage": "default",
+    "viewerOptions":
+        {"width": 1920, "height": 1080}
+}
