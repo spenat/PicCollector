@@ -9,6 +9,7 @@ class Model:
     image_data = {}
     json_dir = os.path.join('pic_collector', 'json_files')
     debug = False
+    options_file = 'options.json'
 
     def load_model(self):
         self.subreddits_filname = os.path.join(self.root_directory, 'config', "subreddits.cfg")
@@ -48,6 +49,10 @@ class Model:
             self.image_data = {}
 
         return success
+
+    def load_options(self):
+        with open(self.options_file) as file:
+            self.options = json.load(file)
 
     def log(self, text):
         print(f'log : {text}')
