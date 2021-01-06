@@ -2,6 +2,7 @@ import subprocess as sp
 import time
 import os
 from shutil import which
+from .image_viewer import ImageViewer
 
 
 def is_tool(name):
@@ -46,14 +47,29 @@ class Controller:
                     self.root_directory, self.json_dir,
                     self.subreddits[self.subreddit]['json'])
                 self.dbmgr.load_file(json_filename, self.subreddit)
+                self.subreddits = self.dbmgr.get_subreddit_dict()
+                self.load_select_list()
             except Exception as exc:
                 self.log(f'got exception from load_file: {exc}')
         if self.load_imagedata():
             self.update_thumbs()
 
+    def native_viewer_destroyed(self, event):
+        self.native_viewer = None
+
     def open_image(self, filename):
         self.log(f"Opening: {filename}")
-        if is_tool('feh'):
+        player = self.options['viewer']
+        if player == 'native':
+            if hasattr(self, 'native_viewer') and self.native_viewer:
+                self.native_viewer.set_image(filename)
+            else:
+                self.native_viewer = ImageViewer(self.root, filename, self.options)
+                self.native_viewer.viewer_window.bind('<Destroy>', self.native_viewer_destroyed)
+            return
+        elif is_tool(player):
+            pass
+        elif is_tool('feh'):
             player = 'feh'
         elif is_tool('gqview'):
             player = 'gqview'

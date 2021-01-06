@@ -4,6 +4,7 @@ import tkinter as tk
 import tkinter.ttk as ttk
 from  tkinter import filedialog
 from PIL import Image, ImageTk
+from .options_view import OptionsView
 
 
 class View:
@@ -15,6 +16,8 @@ class View:
     card_views = {}
     wait_sign = None
     button_row = 5
+    options_view = None
+    options = None
 
     def setup_view(self):
         next_button = tk.Button(self.root, text="Next", command=self.next_page, height=3, width=10)
@@ -25,6 +28,12 @@ class View:
 
         scrape_button = tk.Button(self.root, text="Get pictures", command=scrape, height=1, width=10)
         scrape_button.grid(row=0, column=2)
+
+        def options():
+            self.executor.submit(self.show_options)
+
+        show_options_button = tk.Button(self.root, text="Options", command=options, height=1, width=10)
+        show_options_button.grid(row=0, column=4)
 
         next_button.grid(row=self.button_row,column=3)
         prev_button.grid(row=self.button_row, column=1)
@@ -40,10 +49,18 @@ class View:
         else:
             self.empty_subreddit()
 
+        def quit(event):
+            self.root.destroy()
+        self.root.bind('q', quit)
+
     def load_select_list(self):
         if hasattr(self, 'subreddit_select') and self.subreddit_select:
             self.subreddit_select.destroy()
-        select_list = ['Add subreddit'] + sorted(list(self.subreddits))
+        select_list = sorted(list(self.subreddits))
+        first_sub = select_list[0]
+        if 'quantity' in self.subreddits[first_sub]:
+            select_list = [s + ' (' + str(self.subreddits[s]['quantity']) + ')' for s in select_list]
+        select_list = ['Add subreddit'] + select_list
         self.subreddit_select = ttk.Combobox(self.root, values=select_list, state=['readonly'])
         self.subreddit_select.current(newindex=1)
         self.subreddit_select.grid(row=0, column=0)
@@ -72,9 +89,9 @@ class View:
     def add_subreddit(self, event):
         new_subreddit = event.widget.get()
         self.adder.destroy()
-        filename = self.subreddits_filname
+        filename = self.subreddits_filename
         with open(filename, 'a') as fo:
-                fo.write(new_subreddit)
+            fo.write(new_subreddit + '\n')
         self.load_model()
         self.load_select_list()
         self.log(f"Added subreddit: {new_subreddit}")
@@ -97,6 +114,7 @@ class View:
         if subreddit == 'Add subreddit':
             self.make_adder()
             return
+        subreddit = subreddit.split(' ')[0]
         self.subreddit = subreddit
         self.page = 1
 
@@ -175,12 +193,17 @@ class View:
                         full_image = image_meta['image_urls'][0]
                     else:
                         full_image = "Missing url"
-            except Exception as e:
-                self.log(f'exception in img_path: {e}')
+            except Exception as exc:
+                self.log(f'exception in img_path: {exc}')
             description = image_meta['description']
-            image = Image.open(img_path).resize((240, 150), Image.ANTIALIAS)
+            try:
+                image = Image.open(img_path)
+            except Exception as exc:
+                self.log(f'exception in img_path: {exc}')
+                img_path = os.path.join(self.root_directory, 'pic_collector/not-found.gif')
+                image = Image.open(img_path)
             render = ImageTk.PhotoImage(image)
-            thumb = tk.Label(self.root, image=render, width=240, height=150)
+            thumb = tk.Label(self.root, image=render, width=240, height=150, bg='#999999', relief=tk.RAISED)
             thumb.image = render
             def mouseover_():
                 fi = full_image
@@ -209,11 +232,15 @@ class View:
         
         self.setup_page_counter()
 
+    def show_options(self):
+        if not self.options_view:
+            options_view = OptionsView(self.root, self.root_directory, self.load_options)
+            self.options_view = options_view
+        elif not self.options_view.options_window:
+            self.options_view.setup_view()
+
     def log(self, log_str):
         if self.debug:
             print(f'{self.__class__} : {log_str}')
         if hasattr(self, 'debug_text'):
             self.debug_text.insert('@0,0', f'{log_str}\n')
-
-    def set_options(self):
-        self.log("set_options hiaiai!")

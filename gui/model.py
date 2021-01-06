@@ -7,7 +7,7 @@ class Model:
     page = 1
     subreddit = 'pics'
     image_data = {}
-    json_dir = 'pic_collector/json_files'
+    json_dir = os.path.join('pic_collector', 'json_files')
     debug = False
 
     def load_model(self):

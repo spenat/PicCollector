@@ -1,4 +1,5 @@
 import os
+import shutil
 import json
 import time
 from sqlalchemy import create_engine
@@ -8,7 +9,6 @@ from .gui_model import Model
 
 
 dburl = Model.load_dburl()
-# this_directory = os.path.dirname(os.path.realpath(__file__))
 
 
 def create_database():
@@ -20,11 +20,8 @@ def create_database():
     Base.metadata.create_all(engine)
 
 
-def database_exist():
-    # return which(filename) is not None
-    print(f'dburl: {dburl}')
-    exists = os.path.exists("pcdb.sqlite")
-    print(f'exists: {exists}')
+def database_exist(root_dir):
+    exists = os.path.exists(os.path.join(root_dir, 'db', "pcdb.sqlite"))
     return exists
 
   
@@ -43,8 +40,10 @@ def create_subs_from_cfg(filename, session):
         subreddits = [s for s in subreddits.split('\n') if s != '']
     except FileNotFoundError as exc:
         print(f'{__name__} got {exc}')
-    db_subreddits = [] 
+    db_subreddits = []
+    q_subreddits = [sub.url_key for sub in session.query(Subreddit).all()]
     for sub in subreddits:
-        db_subreddits.append(create_subreddit(sub))
+        if sub not in q_subreddits:
+            db_subreddits.append(create_subreddit(sub))
     session.add_all(db_subreddits)
     session.commit()

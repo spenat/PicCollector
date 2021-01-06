@@ -4,6 +4,13 @@ from scrapy.spiders import CrawlSpider, Rule
 from scrapy.linkextractors import LinkExtractor
 from ..items import PicCollectorItem
 
+cookie = {
+    'edgebucket': 'dummy',
+    'reddaid': 'dummy',
+    'eu_cookie_v2': '3',
+    'over18': '1'
+}
+
 
 class PicsSpider(CrawlSpider):
     name = 'pics'
@@ -19,9 +26,14 @@ class PicsSpider(CrawlSpider):
         ]
         super(PicsSpider, self).__init__(**kwargs)
 
+    def start_requests(self):
+        for url in self.start_urls:
+            yield scrapy.Request(url, cookies=cookie)
+
     def parse_commentpage(self, response):
         description = " ".join(response.url.split('/')[-2].split('_')).title()
-        real_link = response.xpath('//a[@class="may-blank"]').xpath('@href').extract()
+        real_link = response.xpath('//a[@class="may-blank"]').xpath(
+            '@href').extract()
         item = PicCollectorItem()
         item['description'] = description
         item['image_urls'] = real_link
@@ -33,4 +45,6 @@ class PicsSpider(CrawlSpider):
         urls = []
         for a in links:
             url = a.attrib['href']
-            yield Request(url, callback=self.parse_commentpage)
+            yield Request(url,
+                          callback=self.parse_commentpage,
+                          cookies=cookie)

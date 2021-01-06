@@ -1,3 +1,4 @@
+import os
 import json
 from sqlalchemy import create_engine, func
 from sqlalchemy.orm import sessionmaker, scoped_session
@@ -8,8 +9,9 @@ from .database_model import Subreddit, Picture
 
 
 class DatabaseManager():
-    def __init__(self, dburl, echo=True):
+    def __init__(self, dburl, config_dir, echo=True):
         self.dburl = dburl
+        self.config_dir = config_dir
         engine = create_engine(dburl, encoding="utf-8", echo=echo)
         session_factory = sessionmaker(bind=engine)
         self.session = scoped_session(session_factory)
@@ -23,22 +25,26 @@ class DatabaseManager():
         else:
             return None
         s.close()
-        return thumbs_query.order_by(Picture.id).all()
+        return thumbs_query.order_by(Picture.timestamp.desc()).all()
 
     def get_subreddit_dict(self):
         s = self.session()
+        subreddits_filepath = os.path.join(self.config_dir, 'subreddits.cfg')
+        utils.create_subs_from_cfg(subreddits_filepath, s)
         s_query = s.query(Subreddit).all()
-        if not s_query:
-            utils.create_subs_from_cfg('.subreddits.cfg', s)
-            s_query = s.query(Subreddit).all()
         subreddit_dict = {
             sub.name: {
             'json': sub.filename,
-            'url_key': sub.url_key
+            'url_key': sub.url_key,
+            'quantity': self.get_quantity(sub, s)
             }
             for sub in s_query
         }
         return subreddit_dict
+
+    def get_quantity(self, subreddit, s):
+        quantity = s.query(Picture).filter(Picture.subreddit_id == subreddit.id).count()
+        return quantity
 
     def load_file(self, filename, subreddit):
         with open(filename, 'r') as file:
@@ -51,7 +57,7 @@ class DatabaseManager():
         for image in image_data:
             if len(image['images']) != 0:
                 duplicate = s.query(Picture).filter(Picture.checksum == image['images'][0]['checksum']).all()
-                if duplicate or image['images'][0]['checksum'] in checksums: # is not None:
+                if duplicate or image['images'][0]['checksum'] in checksums:
                     duplicate = None
                     continue
             else:

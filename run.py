@@ -7,7 +7,7 @@ from gui.view import View
 from db import utils
 
 
-if utils.database_exist():
+if utils.database_exist(os.path.dirname(os.path.realpath(__file__))):
     from db.gui_model import Model
 else:
     from gui.model import Model
@@ -24,6 +24,7 @@ class PicCollector(Model, View, Controller):
 
 
 root = tk.Tk()
+
 
 with ThreadPoolExecutor(max_workers=60) as executor:
     piccollector = PicCollector(root, executor,

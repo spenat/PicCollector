@@ -1,4 +1,4 @@
 {
-"sqlite": "sqlite:///pcdb.sqlite",
+"sqlite": "sqlite:///{}pcdb.sqlite",
 "postgres": "postgresql+psycopg2://pchead:unsafe@localhost/pcdb"
 }
