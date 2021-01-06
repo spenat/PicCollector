@@ -13,6 +13,8 @@ class Model:
 
     def load_model(self):
         self.subreddits_filname = os.path.join(self.root_directory, 'config', "subreddits.cfg")
+        self.options_file = os.path.join(self.root_directory, 'config', self.options_file)
+        self.load_options()
         self.subreddits = self.read(self.subreddits_filname)
         self.log(self.subreddits)
         self.subreddit = sorted(list(self.subreddits))[0]
