@@ -57,6 +57,23 @@ class Controller:
     def native_viewer_destroyed(self, event):
         self.native_viewer = None
 
+    def start_slideshow(self, event):
+        self.slide_running = True
+        self.run_slideshow()
+
+    def stop_slideshow(self, event):
+        self.slide_running = False
+
+    def run_slideshow(self):
+        self.current_image += 1
+        if self.current_image >= len(self.image_data):
+            self.current_image = 0
+        path = self.image_data[self.current_image]['images'][0]['path']
+        full_path = os.path.join(self.root_directory, 'pic_collector/images', path)
+        self.native_viewer.set_image(full_path)
+        if self.slide_running:
+            self.native_viewer.viewer_window.after(1500, self.run_slideshow)
+
     def open_image(self, filename):
         self.log(f"Opening: {filename}")
         player = self.options['viewer']
@@ -66,6 +83,8 @@ class Controller:
             else:
                 self.native_viewer = ImageViewer(self.root, filename, self.options)
                 self.native_viewer.viewer_window.bind('<Destroy>', self.native_viewer_destroyed)
+                self.native_viewer.viewer_window.bind('s', self.start_slideshow)
+                self.native_viewer.viewer_window.bind('d', self.stop_slideshow)
             return
         elif is_tool(player):
             pass

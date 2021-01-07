@@ -16,6 +16,7 @@ class View:
     card_views = {}
     wait_sign = None
     button_row = 5
+    current_image = 0
     options_view = None
     options = None
 
@@ -212,13 +213,15 @@ class View:
                     status_text = f'Full image: {fi} (Click to open)\nDescription: {d}'
                     self.set_statusbar_text(status_text)
                 return mouseover
-
+            current_index = self.image_data.index(image_meta)
             def click_():
                 fi = full_image
                 i = image_meta
+                ci = current_index
                 def click(event):
                     self.log(event)
                     def c():
+                        self.current_image = ci
                         self.open_image(fi)
                     thing = self.executor.submit(c)
                     self.log(f'thing : {thing}')
