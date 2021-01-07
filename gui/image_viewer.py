@@ -34,8 +34,7 @@ class ImageViewer:
                                       image=render,
                                       width=self.window_width,
                                       height=self.window_height,
-                                      bg='#999999',
-                                      relief=tk.RAISED)
+                                      bg='#999999')
         self.picture_label.image = render
         self.picture_label.grid(row=0, column=0)
 
