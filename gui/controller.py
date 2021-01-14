@@ -1,4 +1,5 @@
 import subprocess as sp
+import random
 import time
 import os
 from shutil import which
@@ -10,6 +11,9 @@ def is_tool(name):
 
 
 class Controller:
+
+    slide_running = False
+
     def run_spider(self):
         self.set_statusbar_text('Scraping pages, please wait...')
         if self.subreddit == 'all':
@@ -58,21 +62,42 @@ class Controller:
         self.native_viewer = None
 
     def start_slideshow(self, event):
-        self.slide_running = True
-        self.run_slideshow()
+        if not self.slide_running:
+            self.slide_running = True
+            self.run_slideshow()
 
     def stop_slideshow(self, event):
         self.slide_running = False
 
     def run_slideshow(self):
+        self.next_image(0)
+        if self.slide_running:
+            self.native_viewer.viewer_window.after(1500, self.run_slideshow)
+
+    def next_image(self, event):
         self.current_image += 1
         if self.current_image >= len(self.image_data):
             self.current_image = 0
+        self.set_current_image()
+
+    def prev_image(self, event):
+        self.current_image -= 1
+        if self.current_image < 0:
+            self.current_image = len(self.image_data)
+        self.set_current_image()
+
+    def set_current_image(self):
         path = self.image_data[self.current_image]['images'][0]['path']
         full_path = os.path.join(self.root_directory, 'pic_collector/images', path)
         self.native_viewer.set_image(full_path)
-        if self.slide_running:
-            self.native_viewer.viewer_window.after(1500, self.run_slideshow)
+
+    def random_subreddit(self, event):
+        subreddit = list(self.subreddits)[random.randint(1, len(self.subreddits) - 1)]
+        self.subreddit = subreddit
+        self.load_imagedata()
+        self.load_select_list()
+        self.update_thumbs()
+        self.next_image(0)
 
     def open_image(self, filename):
         self.log(f"Opening: {filename}")
@@ -85,6 +110,9 @@ class Controller:
                 self.native_viewer.viewer_window.bind('<Destroy>', self.native_viewer_destroyed)
                 self.native_viewer.viewer_window.bind('s', self.start_slideshow)
                 self.native_viewer.viewer_window.bind('d', self.stop_slideshow)
+                self.native_viewer.viewer_window.bind('n', self.next_image)
+                self.native_viewer.viewer_window.bind('p', self.prev_image)
+                self.native_viewer.viewer_window.bind('r', self.random_subreddit)
             return
         elif is_tool(player):
             pass

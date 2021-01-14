@@ -18,6 +18,15 @@ class ImageViewer:
         except Exception as exc:
             print(f'{__class__} got exception : {exc}')
 
+    def create_picture_label(self):
+        if hasattr(self, 'picture_label'):
+            self.picture_label.grid_remove()
+        self.picture_label = tk.Label(self.frame,
+                                      width=self.window_width,
+                                      height=self.window_height,
+                                      bg='#222222')
+        self.picture_label.grid(row=0, column=0)
+
     def set_image(self, filename):
         self.filename = filename
         image = Image.open(self.filename)
@@ -28,15 +37,8 @@ class ImageViewer:
         new_image = Image.open(self.filename).resize((new_width, new_height),
                                                      Image.ANTIALIAS)
         render = ImageTk.PhotoImage(new_image)
-        if hasattr(self, 'picture_label'):
-            self.picture_label.grid_remove()
-        self.picture_label = tk.Label(self.frame,
-                                      image=render,
-                                      width=self.window_width,
-                                      height=self.window_height,
-                                      bg='#999999')
+        self.picture_label.configure(image=render)
         self.picture_label.image = render
-        self.picture_label.grid(row=0, column=0)
 
     def create_viewer_window(self):
         self.viewer_window = tk.Toplevel(self.root,
@@ -49,5 +51,6 @@ class ImageViewer:
 
     def setup(self):
         self.create_viewer_window()
+        self.create_picture_label()
         self.set_image(self.filename)
         self.frame.pack(expand=True)
