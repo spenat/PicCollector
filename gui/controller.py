@@ -69,9 +69,18 @@ class Controller:
     def stop_slideshow(self, event):
         self.slide_running = False
 
+    def set_background(self):
+        path = self.image_data[self.current_image]['images'][0]['path']
+        full_path = os.path.join(self.root_directory, 'pic_collector/images', path)
+        command_list = [
+            'feh', '--no-fehbg', '--bg-fill', full_path
+        ]
+        self.log(command_list)
+        proc = sp.run(command_list, cwd=self.root_directory)
+
     def run_slideshow(self):
-        self.next_image(0)
         if self.slide_running:
+            self.next_image(0)
             self.native_viewer.viewer_window.after(1500, self.run_slideshow)
 
     def next_image(self, event):
@@ -89,6 +98,7 @@ class Controller:
     def set_current_image(self):
         path = self.image_data[self.current_image]['images'][0]['path']
         full_path = os.path.join(self.root_directory, 'pic_collector/images', path)
+        self.set_statusbar_text(f'Currently showing: {full_path}')
         self.native_viewer.set_image(full_path)
 
     def random_subreddit(self, event):
@@ -111,6 +121,7 @@ class Controller:
                 self.native_viewer.viewer_window.bind('s', self.start_slideshow)
                 self.native_viewer.viewer_window.bind('d', self.stop_slideshow)
                 self.native_viewer.viewer_window.bind('n', self.next_image)
+                self.native_viewer.viewer_window.bind('<space>', self.next_image)
                 self.native_viewer.viewer_window.bind('p', self.prev_image)
                 self.native_viewer.viewer_window.bind('r', self.random_subreddit)
             return

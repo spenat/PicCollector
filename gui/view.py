@@ -30,6 +30,12 @@ class View:
         scrape_button = tk.Button(self.root, text="Get pictures", command=scrape, height=1, width=10)
         scrape_button.grid(row=0, column=2)
 
+        def set_bg():
+            self.executor.submit(self.set_background)
+
+        set_bg_button = tk.Button(self.root, text="Set as background", command=set_bg, height=1, width=14)
+        set_bg_button.grid(row=0, column=3)
+
         def options():
             self.executor.submit(self.show_options)
 
