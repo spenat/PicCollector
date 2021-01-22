@@ -65,14 +65,6 @@ class OptionsView:
                                             width=44)
         self.viewer_selector.current(newindex=index)
         self.viewer_selector.grid(row=1, column=1, columnspan=2)
-        """
-        self.storage_label = tk.Label(self.frame,
-                                      text="Image storage folder",
-                                      anchor=tk.W,
-                                      justify=tk.LEFT,
-                                      width=20)
-        self.storage_label.grid(row=2, column=0, columnspan=1)
-        """
         self.current_storage_label = tk.Label(self.frame,
                                               text=self.options['storage'],
                                               width=40)
