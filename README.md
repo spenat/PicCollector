@@ -92,6 +92,7 @@ python run.py
 
 ### Create database (optional but recommended)
 
+
 #### Run python
 
    ```sh
@@ -102,7 +103,7 @@ python run.py
 
    ```python
    from db import utils
-   utils.create
+   utils.create_database()
    ```
 
 ## Roadmap
