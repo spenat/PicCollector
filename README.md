@@ -1,10 +1,3 @@
-[![Contributors][contributors-shield]][contributors-url]
-[![Forks][forks-shield]][forks-url]
-[![Stargazers][stars-shield]][stars-url]
-[![Issues][issues-shield]][issues-url]
-[![MIT License][license-shield]][license-url]
-
-
 
 <br />
 <p align="center">
@@ -97,11 +90,15 @@ This is an example of how to list things you need to use the software and how to
 python run.py
 
 
-# Create database (optional but recommended)
+### Create database (optional but recommended)
+
+#### Run python
 
    ```sh
    python
    ```
+
+#### Type in python
 
    ```python
    from db import utils
