@@ -41,6 +41,13 @@
 </details>
 
 
+## About The Project
+
+Collect images from reddit and catalog them with description scraped from the site.
+I.e. get all the wallpapers from [Wallpapers](http://reddit.com/r/wallpapers).
+Add any subreddit to your list and take home all the pictures.
+
+
 ### Built With
 
 * [Python](https://www.python.org/)
