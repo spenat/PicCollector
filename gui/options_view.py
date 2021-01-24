@@ -29,21 +29,14 @@ class OptionsView:
         except Exception as exc:
             print(f'setup_view caused exception: {exc}')
 
-        print('view has been set up')
-
     def load_options(self, defaults=False):
         options_file = self.default_options_file if defaults else self.options_file
-        print(f'options_file: {options_file}')
-        print('load options')
         with open(options_file) as file:
             options = json.load(file)
-        print(f'options: {options}')
         return options
 
     def restore_defaults(self):
-        print(f'self.options: {self.options}')
         self.options = self.load_options(True)
-        print(f'self.options: {self.options}')
 
     def setup_view(self):
         self.options_window = tk.Toplevel(self.root, width=560, height=200)
@@ -94,9 +87,7 @@ class OptionsView:
 
     def set_viewer(self):
         index = self.viewer_selector.current()
-        print(f'index: {index}')
         self.options['viewer'] = self.options['viewer_alts'][index]
-        print(f'self.options: {self.options}')
 
     def set_storage_folder(self):
         storage_folder = self.options["storage"]
@@ -105,11 +96,8 @@ class OptionsView:
                                           'images')
         storage_folder = filedialog.askdirectory(parent=self.options_window,
                                                  initialdir=storage_folder)
-        print(f'storage_folder: {storage_folder}')
         self.options["storage"] = storage_folder
         self.current_storage_label.configure(text=storage_folder)
-        print(f'storage_folder: {storage_folder}')
-        print(f'self.options: {self.options}')
 
     def save(self):
         self.set_viewer()
@@ -121,6 +109,5 @@ class OptionsView:
         self.load_options_callback()
 
     def destroy(self):
-        print('destroying self')
         self.options_window.destroy()
         self.options_window = None

@@ -7,6 +7,8 @@ from sqlalchemy.orm import sessionmaker
 from .database_manager import DatabaseManager
 from .database_model import Base
 
+from pic_collector import settings
+
 
 class Model:
 
@@ -19,6 +21,7 @@ class Model:
     dburl_file = "dburl.json"
     db_type = "sqlite"
     options_file = 'options.json'
+    images_dir = settings.IMAGES_STORE
 
     def __init__(self):
         self.subreddits_filename = os.path.join(self.root_directory, 'config', "subreddits.cfg")

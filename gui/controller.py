@@ -71,7 +71,7 @@ class Controller:
 
     def set_background(self):
         path = self.image_data[self.current_image]['images'][0]['path']
-        full_path = os.path.join(self.root_directory, 'pic_collector/images', path)
+        full_path = os.path.join(self.images_dir, path)
         command_list = [
             'feh', '--no-fehbg', '--bg-fill', full_path
         ]
@@ -92,12 +92,13 @@ class Controller:
     def prev_image(self, event):
         self.current_image -= 1
         if self.current_image < 0:
-            self.current_image = len(self.image_data)
+            self.current_image = len(self.image_data) - 1
         self.set_current_image()
 
     def set_current_image(self):
-        path = self.image_data[self.current_image]['images'][0]['path']
-        full_path = os.path.join(self.root_directory, 'pic_collector/images', path)
+        image_meta = self.image_data[self.current_image]
+        path = image_meta['images'][0]['path']
+        full_path = os.path.join(self.images_dir, path)
         self.set_statusbar_text(f'Currently showing: {full_path}')
         self.native_viewer.set_image(full_path)
 

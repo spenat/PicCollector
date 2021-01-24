@@ -1,6 +1,8 @@
 import json
 import os
 
+from pic_collector import settings
+
 
 class Model:
 
@@ -10,10 +12,13 @@ class Model:
     json_dir = os.path.join('pic_collector', 'json_files')
     debug = False
     options_file = 'options.json'
+    images_dir = settings.IMAGES_STORE
 
     def load_model(self):
-        self.subreddits_filname = os.path.join(self.root_directory, 'config', "subreddits.cfg")
-        self.options_file = os.path.join(self.root_directory, 'config', self.options_file)
+        self.subreddits_filname = os.path.join(self.root_directory, 'config',
+                                               "subreddits.cfg")
+        self.options_file = os.path.join(self.root_directory, 'config',
+                                         self.options_file)
         self.load_options()
         self.subreddits = self.read(self.subreddits_filname)
         self.log(self.subreddits)
@@ -45,12 +50,22 @@ class Model:
         try:
             with open(filename, 'r') as file:
                 self.image_data = json.load(file)
+            self.clean_image_data()
             success = True
-        except Exception as e:
-            self.log(f"Exception noted: {e}")
+        except Exception as exc:
+            self.log(f"Exception noted: {exc}")
             self.image_data = {}
 
         return success
+
+    def clean_image_data(self):
+        to_be_removed = []
+        for image_meta in self.image_data:
+            images = image_meta['images']
+            if len(image_meta['images']) == 0:
+                to_be_removed.append(image_meta)
+        for im in to_be_removed:
+            self.image_data.remove(im)
 
     def load_options(self):
         with open(self.options_file) as file:

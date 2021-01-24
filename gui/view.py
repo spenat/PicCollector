@@ -193,8 +193,8 @@ class View:
                 if len(image_meta['images']) > 0:
                     image_path = image_meta['images'][0]['path']
                     thumb_path = os.path.join('thumbs/small/', image_path.split('/')[-1])
-                    img_path = os.path.join(self.root_directory, 'pic_collector/images/', thumb_path)
-                    full_image = os.path.join(self.root_directory, 'pic_collector/images/', image_path)
+                    img_path = os.path.join(self.images_dir, thumb_path)
+                    full_image = os.path.join(self.images_dir, image_path)
                 else:
                     img_path = os.path.join(self.root_directory, 'pic_collector/not-found.gif')
                     if len(image_meta['image_urls']) > 0:
@@ -230,13 +230,13 @@ class View:
                     def c():
                         self.current_image = ci
                         self.open_image(fi)
-                    thing = self.executor.submit(c)
-                    self.log(f'thing : {thing}')
+                    self.executor.submit(c)
                 return click
 
             self.thumbs += [thumb]
             thumb.grid(row=(count // tpr) + 1, column=(count % tpr))
-            thumb.bind('<Button-1>', click_())
+            if full_image != "Missing url":
+                thumb.bind('<Button-1>', click_())
             thumb.bind('<Enter>', mouseover_())
             count += 1
         
