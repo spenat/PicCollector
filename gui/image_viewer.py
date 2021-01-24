@@ -31,11 +31,14 @@ class ImageViewer:
         self.filename = filename
         image = Image.open(self.filename)
         image_width, image_height = image._size
-        scale = self.window_height / image_height
-        new_width = int(float(image_width) * scale)
-        new_height = int(float(image_height) * scale)
-        new_image = Image.open(self.filename).resize((new_width, new_height),
-                                                     Image.ANTIALIAS)
+        if image_height > self.window_height:
+            scale = self.window_height / image_height
+            new_width = int(float(image_width) * scale)
+            new_height = int(float(image_height) * scale)
+            new_image = Image.open(self.filename).resize((new_width, new_height),
+                                                         Image.ANTIALIAS)
+        else:
+             new_image = Image.open(self.filename)
         render = ImageTk.PhotoImage(new_image)
         self.picture_label.configure(image=render)
         self.picture_label.image = render
