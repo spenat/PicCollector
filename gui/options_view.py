@@ -58,36 +58,57 @@ class OptionsView:
                                             width=44)
         self.viewer_selector.current(newindex=index)
         self.viewer_selector.grid(row=1, column=1, columnspan=2)
+        width_index = self.options['viewerOptions']['alt_widths'].index(self.options['viewerOptions']['width'])
+        height_index = self.options['viewerOptions']['alt_heights'].index(self.options['viewerOptions']['height'])
+        self.viewer_dimensions_label = tk.Label(self.frame,
+                                              text="Viewer dimensions",
+                                              anchor=tk.W,
+                                              justify=tk.LEFT,
+                                              width=20)
+        self.viewer_dimensions_label.grid(row=2, column=0, columnspan=1)
+        self.image_viewer_width = ttk.Combobox(self.frame,
+                                            values=self.options['viewerOptions']['alt_widths'],
+                                            state=['readonly'],
+                                            width=6)
+        self.image_viewer_width.current(newindex=width_index)
+        self.image_viewer_width.grid(row=2, column=1, columnspan=1)
+        self.image_viewer_height = ttk.Combobox(self.frame,
+                                            values=self.options['viewerOptions']['alt_heights'],
+                                            state=['readonly'],
+                                            width=6)
+        self.image_viewer_height.current(newindex=height_index)
+        self.image_viewer_height.grid(row=2, column=2, columnspan=1)
         self.current_storage_label = tk.Label(self.frame,
                                               text=self.options['storage'],
                                               width=40)
-        self.current_storage_label.grid(row=2, column=0, columnspan=2)
+        self.current_storage_label.grid(row=3, column=0, columnspan=2)
         self.storage_selector = tk.Button(self.frame,
                                           text="Select folder",
                                           command=self.set_storage_folder,
                                           width=20)
-        self.storage_selector.grid(row=2, column=2, columnspan=1)
+        self.storage_selector.grid(row=3, column=2, columnspan=1)
         self.restore_defaults_button = tk.Button(self.frame,
                                                  text="Restore defaults",
                                                  command=self.restore_defaults,
                                                  width=20)
-        self.restore_defaults_button.grid(row=3, column=1, columnspan=1)
+        self.restore_defaults_button.grid(row=4, column=1, columnspan=1)
         self.save_button = tk.Button(self.frame,
                                      text="Save",
                                      command=self.save,
                                      width=20)
-        self.save_button.grid(row=3, column=0, columnspan=1)
+        self.save_button.grid(row=4, column=0, columnspan=1)
 
         self.close_button = tk.Button(self.frame,
                                       text="Close",
                                       command=self.destroy,
                                       width=20)
-        self.close_button.grid(row=3, column=2, columnspan=1)
+        self.close_button.grid(row=4, column=2, columnspan=1)
         self.frame.pack(expand=True)
 
     def set_viewer(self):
-        index = self.viewer_selector.current()
-        self.options['viewer'] = self.options['viewer_alts'][index]
+        self.options['viewer'] = self.options['viewer_alts'][self.viewer_selector.current()]
+        self.options['viewerOptions']['width'] = self.options['viewerOptions']['alt_widths'][self.image_viewer_width.current()]
+        self.options['viewerOptions']['height'] = self.options['viewerOptions']['alt_heights'][self.image_viewer_height.current()]
 
     def set_storage_folder(self):
         storage_folder = self.options["storage"]
