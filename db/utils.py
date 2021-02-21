@@ -11,9 +11,12 @@ from .gui_model import Model
 dburl = Model.load_dburl()
 
 
-def create_database():
+def create_database(db_type = 'sqlite'):
     # Base = declarative_base()
     dburl = Model.load_dburl()
+    if db_type == 'sqlite':
+        db_directory = os.path.dirname(os.path.realpath(__file__)) + '/'
+        dburl = dburl.format(db_directory)
     engine = create_engine(dburl, encoding="utf-8", echo=True)
     session = sessionmaker()
     session.configure(bind=engine)

@@ -38,7 +38,7 @@ class Controller:
             self.subreddits[self.subreddit]['url_key'])
         self.log(argument)
         command_list = [
-            'scrapy', 'crawl', 'pics', '-o', json_name, '-a', argument
+            'python', '-m', 'scrapy', 'crawl', 'pics', '-o', json_name, '-a', argument
         ]
         self.log(command_list)
         proc = sp.run(command_list, cwd=self.root_directory)
