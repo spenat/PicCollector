@@ -124,6 +124,7 @@ class Controller:
                 self.native_viewer.viewer_window.bind('n', self.next_image)
                 self.native_viewer.viewer_window.bind('<space>', self.next_image)
                 self.native_viewer.viewer_window.bind('p', self.prev_image)
+                self.native_viewer.viewer_window.bind('<BackSpace>', self.prev_image)
                 self.native_viewer.viewer_window.bind('r', self.random_subreddit)
             return
         elif is_tool(player):
