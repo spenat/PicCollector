@@ -20,11 +20,11 @@ class Model:
         self.options_file = os.path.join(self.root_directory, 'config',
                                          self.options_file)
         self.load_options()
-        self.subreddits = self.read(self.subreddits_filname)
+        self.subreddits = self.read_subreddits(self.subreddits_filname)
         self.log(self.subreddits)
         self.subreddit = sorted(list(self.subreddits))[0]
 
-    def read(self, filename):
+    def read_subreddits(self, filename):
         try:
             with open(filename, 'r+') as fo:
                 subreddits = fo.read()

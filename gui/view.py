@@ -12,8 +12,6 @@ class View:
     thumbs = []
     page_counter = None
     image_data = None
-    cards = []
-    card_views = {}
     wait_sign = None
     button_row = 5
     current_image = 0
@@ -189,58 +187,62 @@ class View:
         else:
             return
         for image_meta in image_data:
-            try:
-                if len(image_meta['images']) > 0:
-                    image_path = image_meta['images'][0]['path']
-                    thumb_path = os.path.join('thumbs/small/', image_path.split('/')[-1])
-                    img_path = os.path.join(self.images_dir, thumb_path)
-                    full_image = os.path.join(self.images_dir, image_path)
-                else:
-                    img_path = os.path.join(self.root_directory, 'pic_collector/not-found.gif')
-                    if len(image_meta['image_urls']) > 0:
-                        full_image = image_meta['image_urls'][0]
-                    else:
-                        full_image = "Missing url"
-            except Exception as exc:
-                self.log(f'exception in img_path: {exc}')
-            description = image_meta['description']
-            try:
-                image = Image.open(img_path)
-            except Exception as exc:
-                self.log(f'exception in img_path: {exc}')
-                img_path = os.path.join(self.root_directory, 'pic_collector/not-found.gif')
-                image = Image.open(img_path)
-            render = ImageTk.PhotoImage(image)
-            thumb = tk.Label(self.root, image=render, width=240, height=150, bg='#999999', relief=tk.RAISED)
-            thumb.image = render
-            def mouseover_():
-                fi = full_image
-                d = description
-                def mouseover(event):
-                    status_text = f'Full image: {fi} (Click to open)\nDescription: {d}'
-                    self.set_statusbar_text(status_text)
-                return mouseover
-            current_index = self.image_data.index(image_meta)
-            def click_():
-                fi = full_image
-                i = image_meta
-                ci = current_index
-                def click(event):
-                    self.log(event)
-                    def c():
-                        self.current_image = ci
-                        self.open_image(fi)
-                    self.executor.submit(c)
-                return click
-
+            thumb = self.create_thumb(image_meta)
             self.thumbs += [thumb]
             thumb.grid(row=(count // tpr) + 1, column=(count % tpr))
-            if full_image != "Missing url":
-                thumb.bind('<Button-1>', click_())
-            thumb.bind('<Enter>', mouseover_())
             count += 1
         
         self.setup_page_counter()
+
+    def create_thumb(self, image_meta):
+        try:
+            if len(image_meta['images']) > 0:
+                image_path = image_meta['images'][0]['path']
+                thumb_path = os.path.join('thumbs/small/', image_path.split('/')[-1])
+                img_path = os.path.join(self.images_dir, thumb_path)
+                full_image = os.path.join(self.images_dir, image_path)
+            else:
+                img_path = os.path.join(self.root_directory, 'pic_collector/not-found.gif')
+                if len(image_meta['image_urls']) > 0:
+                    full_image = image_meta['image_urls'][0]
+                else:
+                    full_image = "Missing url"
+        except Exception as exc:
+            self.log(f'exception in img_path: {exc}')
+        description = image_meta['description']
+        try:
+            image = Image.open(img_path)
+        except Exception as exc:
+            self.log(f'exception in img_path: {exc}')
+            img_path = os.path.join(self.root_directory, 'pic_collector/not-found.gif')
+            image = Image.open(img_path)
+        render = ImageTk.PhotoImage(image)
+        thumb = tk.Label(self.root, image=render, width=240, height=150, bg='#999999', relief=tk.RAISED)
+        thumb.image = render
+        def mouseover_():
+            fi = full_image
+            d = description
+            def mouseover(event):
+                status_text = f'Full image: {fi} (Click to open)\nDescription: {d}'
+                self.set_statusbar_text(status_text)
+            return mouseover
+        current_index = self.image_data.index(image_meta)
+        def click_():
+            fi = full_image
+            i = image_meta
+            ci = current_index
+            def click(event):
+                self.log(event)
+                def c():
+                    self.current_image = ci
+                    self.open_image(fi)
+                self.executor.submit(c)
+            return click
+        if full_image != "Missing url":
+            thumb.bind('<Button-1>', click_())
+        thumb.bind('<Enter>', mouseover_())
+        return thumb
+
 
     def show_options(self):
         if not self.options_view:

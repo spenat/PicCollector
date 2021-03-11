@@ -45,7 +45,7 @@ class Model:
         json_filename = os.path.join(self.root_directory, self.json_dir,
                                      self.subreddits[self.subreddit]['json'])
         if not thumbs and os.path.exists(json_filename):
-            self.dbmgr.load_file(json_filename, self.subreddit)
+            self.dbmgr.load_scrape_result_file(json_filename, self.subreddit)
             thumbs = self.dbmgr.get_thumbs(self.subreddit)
         self.image_data = [{
             "image_urls": [t.image_url],

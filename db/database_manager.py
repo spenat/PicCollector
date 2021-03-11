@@ -46,7 +46,7 @@ class DatabaseManager():
         quantity = s.query(Picture).filter(Picture.subreddit_id == subreddit.id).count()
         return quantity
 
-    def load_file(self, filename, subreddit):
+    def load_scrape_result_file(self, filename, subreddit):
         with open(filename, 'r') as file:
             image_data = json.load(file)
         s = self.session()
@@ -58,7 +58,6 @@ class DatabaseManager():
             if len(image['images']) != 0:
                 duplicate = s.query(Picture).filter(Picture.checksum == image['images'][0]['checksum']).all()
                 if duplicate or image['images'][0]['checksum'] in checksums:
-                    duplicate = None
                     continue
             else:
                 continue

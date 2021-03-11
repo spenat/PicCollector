@@ -50,7 +50,7 @@ class Controller:
                 json_filename = os.path.join(
                     self.root_directory, self.json_dir,
                     self.subreddits[self.subreddit]['json'])
-                self.dbmgr.load_file(json_filename, self.subreddit)
+                self.dbmgr.load_scrape_result_file(json_filename, self.subreddit)
                 self.subreddits = self.dbmgr.get_subreddit_dict()
                 self.load_select_list()
             except Exception as exc:

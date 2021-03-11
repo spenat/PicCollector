@@ -1,10 +1,7 @@
 import os
-import shutil
-import json
-import time
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, relationship
-from .database_model import Subreddit, Picture, Base
+from sqlalchemy.orm import sessionmaker
+from .database_model import Subreddit, Base
 from .gui_model import Model
 
 
