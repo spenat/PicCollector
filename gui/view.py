@@ -243,7 +243,6 @@ class View:
         thumb.bind('<Enter>', mouseover_())
         return thumb
 
-
     def show_options(self):
         if not self.options_view:
             options_view = OptionsView(self.root, self.root_directory, self.load_options)

@@ -72,7 +72,7 @@ class DatabaseManager():
                 picture.subreddit_id = subreddit.id
                 pictures.append(picture)
             except Exception as exc:
-                self.log(f'got exception when adding file: {exc}')
+                print(f'got exception when adding file: {exc}')
         s.add_all(pictures)
         s.commit()
         s.close()

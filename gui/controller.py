@@ -23,11 +23,12 @@ class Controller:
         else:
             self.scrape_site(self.subreddit)
         self.load_imagedata()
+        self.update_thumbs()
+        self.load_select_list()
         self.set_statusbar_text('Scraping done!')
 
     def scrape_site(self, subreddit):
         json_name = os.path.join(self.root_directory, self.json_dir)
-        self.log(json_name)
         time.sleep(3)
         json_name = os.path.join(json_name, self.subreddits[subreddit]['json'])
         self.log(f'json_name: {json_name}')
@@ -35,7 +36,7 @@ class Controller:
             self.log('its a file!\nremoving file {json_name}')
             os.remove(json_name)
         argument = 'subreddit={}'.format(
-            self.subreddits[self.subreddit]['url_key'])
+            self.subreddits[subreddit]['url_key'])
         self.log(argument)
         command_list = [
             'python', '-m', 'scrapy', 'crawl', 'pics', '-o', json_name, '-a', argument
@@ -49,14 +50,11 @@ class Controller:
             try:
                 json_filename = os.path.join(
                     self.root_directory, self.json_dir,
-                    self.subreddits[self.subreddit]['json'])
-                self.dbmgr.load_scrape_result_file(json_filename, self.subreddit)
+                    self.subreddits[subreddit]['json'])
+                self.dbmgr.load_scrape_result_file(json_filename, subreddit)
                 self.subreddits = self.dbmgr.get_subreddit_dict()
-                self.load_select_list()
             except Exception as exc:
                 self.log(f'got exception from load_file: {exc}')
-        if self.load_imagedata():
-            self.update_thumbs()
 
     def native_viewer_destroyed(self, event):
         self.native_viewer = None
