@@ -1,5 +1,6 @@
 import os
 import json
+import traceback
 import _tkinter
 import tkinter as tk
 import tkinter.ttk as ttk
@@ -24,10 +25,12 @@ class OptionsView:
             self.options = self.load_options()
         except Exception as exc:
             print(f'load_options caused exception: {exc}')
+            traceback.print_exc()
         try:
             self.setup_view()
         except Exception as exc:
             print(f'setup_view caused exception: {exc}')
+            traceback.print_exc()
 
     def load_options(self, defaults=False):
         options_file = self.default_options_file if defaults else self.options_file
@@ -127,6 +130,7 @@ class OptionsView:
                 json.dump(self.options, file, indent=4)
         except Exception as exc:
             print(f"Exception caused by {__class__}.save() : {exc}")
+            traceback.print_exc()
         self.load_options_callback()
 
     def destroy(self):

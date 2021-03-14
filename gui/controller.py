@@ -2,6 +2,7 @@ import subprocess as sp
 import random
 import time
 import os
+import traceback
 from shutil import which
 from .image_viewer import ImageViewer
 
@@ -54,7 +55,8 @@ class Controller:
                 self.dbmgr.load_scrape_result_file(json_filename, subreddit)
                 self.subreddits = self.dbmgr.get_subreddit_dict()
             except Exception as exc:
-                self.log(f'got exception from load_file: {exc}')
+                self.log(f'got exception from load_file: {json_filename} : {exc}')
+                self.log(traceback.format_exc())
 
     def native_viewer_destroyed(self, event):
         self.native_viewer = None

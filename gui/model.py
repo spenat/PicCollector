@@ -1,5 +1,6 @@
 import json
 import os
+import traceback
 
 from pic_collector import settings
 
@@ -30,7 +31,8 @@ class Model:
                 subreddits = fo.read()
             subreddits = [s for s in subreddits.split('\n') if s != '']
         except FileNotFoundError as exc:
-            self.log(f'{exc}')
+            self.log(f'Got exception {exc} when opening file: {filename}')
+            traceback.print_exc()
         subreddits = {
             ' '.join(subreddit.split('-')).title(): {
                 'json': subreddit + '.json',
@@ -54,6 +56,7 @@ class Model:
             success = True
         except Exception as exc:
             self.log(f"Exception noted: {exc}")
+            self.log(traceback.format_exc())
             self.image_data = {}
 
         return success

@@ -1,5 +1,7 @@
 import os
 import json
+import traceback
+
 from sqlalchemy import create_engine, func
 from sqlalchemy.orm import sessionmaker, scoped_session
 from . import utils
@@ -34,9 +36,9 @@ class DatabaseManager():
         s_query = s.query(Subreddit).all()
         subreddit_dict = {
             sub.name: {
-            'json': sub.filename,
-            'url_key': sub.url_key,
-            'quantity': self.get_quantity(sub, s)
+                'json': sub.filename,
+                'url_key': sub.url_key,
+                'quantity': self.get_quantity(sub, s)
             }
             for sub in s_query
         }
@@ -72,7 +74,8 @@ class DatabaseManager():
                 picture.subreddit_id = subreddit.id
                 pictures.append(picture)
             except Exception as exc:
-                print(f'got exception when adding file: {exc}')
+                print(f'Got exception when adding file: {filename} : {exc}')
+                traceback.print_exception()
         s.add_all(pictures)
         s.commit()
         s.close()

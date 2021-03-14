@@ -1,5 +1,6 @@
 import os
 import json
+import traceback
 import _tkinter
 import tkinter as tk
 import tkinter.ttk as ttk
@@ -17,6 +18,7 @@ class ImageViewer:
             self.setup()
         except Exception as exc:
             print(f'{__class__} got exception : {exc}')
+            traceback.print_exc()
 
     def create_picture_label(self):
         if hasattr(self, 'picture_label'):

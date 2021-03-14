@@ -1,4 +1,5 @@
 import os
+import traceback
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from .database_model import Subreddit, Base
@@ -40,6 +41,7 @@ def create_subs_from_cfg(filename, session):
         subreddits = [s for s in subreddits.split('\n') if s != '']
     except FileNotFoundError as exc:
         print(f'{__name__} got {exc}')
+        traceback.print_exc()
     db_subreddits = []
     q_subreddits = [sub.url_key for sub in session.query(Subreddit).all()]
     for sub in subreddits:

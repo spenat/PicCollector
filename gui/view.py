@@ -1,4 +1,5 @@
 import os
+import traceback
 import _tkinter
 import tkinter as tk
 import tkinter.ttk as ttk
@@ -209,11 +210,13 @@ class View:
                     full_image = "Missing url"
         except Exception as exc:
             self.log(f'exception in img_path: {exc}')
+            self.log(traceback.format_exc())
         description = image_meta['description']
         try:
             image = Image.open(img_path)
         except Exception as exc:
             self.log(f'exception in img_path: {exc}')
+            self.log(traceback.format_exc())
             img_path = os.path.join(self.root_directory, 'pic_collector/not-found.gif')
             image = Image.open(img_path)
         render = ImageTk.PhotoImage(image)
