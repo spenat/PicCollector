@@ -63,11 +63,10 @@ def main():
     parser = argparse.ArgumentParser(description='PicCollector from command prompt')
     parser.add_argument('--subreddits', dest='subreddits', type=str, nargs='+',
                         help='Subreddits you want to scrape and/or add')
-    parser.add_argument('--subreddit-file', dest='subreddit_file', type=str, # nargs='+',
+    parser.add_argument('--subreddit-file', dest='subreddit_file', type=str,
                         default='config/subreddits.cfg',
                         help='File containing subreddits')
     parser.add_argument('--scrape', dest='scrape', action='store_true',
-                        # const=scrape,
                         help='Scrape subreddits')
     parser.add_argument('--createdb', dest='create_db', action='store_true',
                         help='Create a sqlite database')
