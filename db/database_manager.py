@@ -2,7 +2,7 @@ import os
 import json
 import traceback
 
-from sqlalchemy import create_engine, func
+from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 from . import utils
 from .database_model import Subreddit, Picture
@@ -20,7 +20,8 @@ class DatabaseManager():
 
     def get_thumbs(self, subreddit):
         s = self.session()
-        subreddit = s.query(Subreddit).filter(Subreddit.name == subreddit).one_or_none()
+        subreddit = s.query(Subreddit).filter(
+            Subreddit.name == subreddit).one_or_none()
         if subreddit:
             thumbs_query = s.query(Picture).filter(
                 Picture.subreddit_id == subreddit.id)
@@ -45,7 +46,8 @@ class DatabaseManager():
         return subreddit_dict
 
     def get_quantity(self, subreddit, s):
-        quantity = s.query(Picture).filter(Picture.subreddit_id == subreddit.id).count()
+        quantity = s.query(Picture).filter(
+            Picture.subreddit_id == subreddit.id).count()
         return quantity
 
     def load_scrape_result_file(self, filename, subreddit):
@@ -58,7 +60,8 @@ class DatabaseManager():
         checksums = []
         for image in image_data:
             if len(image['images']) != 0:
-                duplicate = s.query(Picture).filter(Picture.checksum == image['images'][0]['checksum']).all()
+                duplicate = s.query(Picture).filter(
+                    Picture.checksum == image['images'][0]['checksum']).all()
                 if duplicate or image['images'][0]['checksum'] in checksums:
                     continue
             else:

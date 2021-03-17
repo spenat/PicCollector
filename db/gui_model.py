@@ -1,11 +1,7 @@
 import os
 import json
 
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-
 from .database_manager import DatabaseManager
-from .database_model import Base
 
 from pic_collector import settings
 
@@ -24,13 +20,18 @@ class Model:
     images_dir = settings.IMAGES_STORE
 
     def __init__(self):
-        self.subreddits_filename = os.path.join(self.root_directory, 'config', "subreddits.cfg")
-        self.options_file = os.path.join(self.root_directory, 'config', self.options_file)
+        self.subreddits_filename = os.path.join(self.root_directory, 'config',
+                                                "subreddits.cfg")
+        self.options_file = os.path.join(self.root_directory, 'config',
+                                         self.options_file)
         self.dburl = Model.load_dburl()
         if self.db_type == 'sqlite':
             self.dburl = self.dburl.format(self.db_directory)
         self.log(self.dburl)
-        self.dbmgr = DatabaseManager(self.dburl, os.path.join(self.root_directory, 'config'), echo=False)
+        self.dbmgr = DatabaseManager(self.dburl,
+                                     os.path.join(self.root_directory,
+                                                  'config'),
+                                     echo=False)
 
     def load_model(self):
         self.load_options()
