@@ -7,10 +7,6 @@ from shutil import which
 from .image_viewer import ImageViewer
 
 
-def is_tool(name):
-    return which(name) is not None
-
-
 class Controller:
 
     slide_running = False
@@ -77,6 +73,7 @@ class Controller:
         ]
         self.log(command_list)
         proc = sp.run(command_list, cwd=self.root_directory)
+        self.log(proc)
 
     def run_slideshow(self):
         if self.slide_running:
@@ -127,11 +124,11 @@ class Controller:
                 self.native_viewer.viewer_window.bind('<BackSpace>', self.prev_image)
                 self.native_viewer.viewer_window.bind('r', self.random_subreddit)
             return
-        elif is_tool(player):
+        elif which(player):
             pass
-        elif is_tool('feh'):
+        elif which('feh'):
             player = 'feh'
-        elif is_tool('gqview'):
+        elif which('gqview'):
             player = 'gqview'
         else:
             player = 'xdg-open'

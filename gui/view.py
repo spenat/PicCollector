@@ -22,7 +22,7 @@ class View:
     def setup_view(self):
         next_button = tk.Button(self.root, text="Next", command=self.next_page, height=3, width=10)
         prev_button = tk.Button(self.root, text="Prev", command=self.prev_page, height=3, width=10)
-        
+
         def scrape():
             self.executor.submit(self.run_spider)
 
@@ -80,7 +80,6 @@ class View:
         empty_void = tk.Frame(self.root, width=5*240, height=4*150)
         empty_void.grid(row=1, column=0, columnspan=5)
         self.empty_void = empty_void
-        
 
     def make_adder(self):
         adder = tk.Toplevel(self.root)
@@ -105,7 +104,7 @@ class View:
 
     def create_debug_text(self):
         text_frame = tk.Text(self.root, width=140, height=47)
-        self.debug_text = text_frame 
+        self.debug_text = text_frame
         self.debug_text.grid(row=0, column=5, rowspan=6)
 
     def setup_statusbar(self):
@@ -192,7 +191,7 @@ class View:
             self.thumbs += [thumb]
             thumb.grid(row=(count // tpr) + 1, column=(count % tpr))
             count += 1
-        
+
         self.setup_page_counter()
 
     def create_thumb(self, image_meta):

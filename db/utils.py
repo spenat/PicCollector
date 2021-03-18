@@ -9,7 +9,7 @@ from .gui_model import Model
 dburl = Model.load_dburl()
 
 
-def create_database(db_type = 'sqlite'):
+def create_database(db_type='sqlite'):
     # Base = declarative_base()
     dburl = Model.load_dburl()
     if db_type == 'sqlite':
@@ -25,7 +25,7 @@ def database_exist(root_dir):
     exists = os.path.exists(os.path.join(root_dir, 'db', "pcdb.sqlite"))
     return exists
 
-  
+
 def create_subreddit(subreddit_name):
     subreddit = Subreddit()
     subreddit.name = ' '.join(subreddit_name.split('-')).title()
@@ -37,7 +37,7 @@ def create_subreddit(subreddit_name):
 def create_subs_from_cfg(filename, session):
     try:
         with open(filename, 'r+') as fo:
-            subreddits = fo.read() 
+            subreddits = fo.read()
         subreddits = [s for s in subreddits.split('\n') if s != '']
     except FileNotFoundError as exc:
         print(f'{__name__} got {exc}')
