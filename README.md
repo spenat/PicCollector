@@ -55,6 +55,7 @@ Add any subreddit to your list and take home all the pictures.
 * [scrapy](https://scrapy.org/)
 * [sqlalchemy](https://www.sqlalchemy.org/)
 * [pillow](https://python-pillow.org/)
+* [falcon](https://falconframework.org/)
 
 
 
@@ -79,6 +80,11 @@ This is an example of how to list things you need to use the software and how to
   pip install -r requirements.txt
   ```
 
+  * Install requirements for api
+  ```sh
+  pip install -r requirements_falcon.txt
+  ```
+
 ### Installation
 
 1. Clone the repo
@@ -94,24 +100,20 @@ This is an example of how to list things you need to use the software and how to
 
 ## Usage
 
+### Start GUI
+```sh
 python run.py
+```
 
+### Use from commandline (from directory containing the directory PicCollector)
+```sh
+python PicCollector --help
+```
 
 ### Create database (optional but recommended)
-
-
-#### Run python
-
-   ```sh
-   python
-   ```
-
-#### Type in python
-
-   ```python
-   from db import utils
-   utils.create_database()
-   ```
+```sh
+python PicCollector --createdb
+```
 
 ## Roadmap
 
