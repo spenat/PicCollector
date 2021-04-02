@@ -1,10 +1,10 @@
-import os
 import json
 import logging
-
-from .database_manager import DatabaseManager
+import os
 
 from pic_collector import settings
+
+from .database_manager import DatabaseManager
 
 
 class Model:

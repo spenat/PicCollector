@@ -1,13 +1,12 @@
-import os
-import logging
 import argparse
-from db import utils
-from db import database_manager
-from gui.model import Model
-from gui.controller import Controller
-from gui.pic_collector import run
-from db.gui_model import Model as DBModel
+import logging
+import os
 
+from db import database_manager, utils
+from db.gui_model import Model as DBModel
+from gui.controller import Controller
+from gui.model import Model
+from gui.pic_collector import run
 
 DBNAME = 'db/pcdb.sqlite'
 cdir = os.path.dirname(os.path.realpath(__file__))

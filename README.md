@@ -70,7 +70,7 @@ Install software needed to run PicCollector
 
 * Install Python 3.x with tk/tcl support: [Python](https://www.python.org/downloads/)
 
-* Get pip [pip](https://pip.pypa.io/en/stable/installing/)
+* Get [pip](https://pip.pypa.io/en/stable/installing/)
 
 * pip
   * Create virtual environment (optional)

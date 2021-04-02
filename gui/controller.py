@@ -1,10 +1,11 @@
-import subprocess as sp
-import random
-import time
-import os
 import logging
+import os
+import random
+import subprocess as sp
+import time
 import traceback
 from shutil import which
+
 from .image_viewer import ImageViewer
 
 
