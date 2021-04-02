@@ -1,9 +1,11 @@
 import os
+import logging
 import argparse
 from db import utils
 from db import database_manager
 from gui.model import Model
 from gui.controller import Controller
+from gui.pic_collector import run
 from db.gui_model import Model as DBModel
 
 
@@ -24,13 +26,13 @@ def scrape(args):
     else:
         subreddits = load_subreddits(args)
 
-    class PicCollector(DBModel, Controller):
+    class PicConsole(DBModel, Controller):
         def __init__(self):
             self.root_directory = cdir
             super().__init__()
             self.load_model()
 
-    ctrl = PicCollector()
+    ctrl = PicConsole()
     print(f'Scraping from {subreddits}')
     for subreddit in subreddits:
         ctrl.scrape_site(subreddit)
@@ -66,6 +68,8 @@ def load_json(args):
 def main():
     parser = argparse.ArgumentParser(
         description='PicCollector from command prompt')
+    parser.add_argument('--gui', dest='gui', action='store_true',
+                        help='Start gui')
     parser.add_argument('--subreddits', dest='subreddits', type=str, nargs='+',
                         help='Subreddits you want to scrape and/or add')
     parser.add_argument('--subreddit-file', dest='subreddit_file', type=str,
@@ -82,12 +86,15 @@ def main():
                         help='Load existing json files into database')
 
     args = parser.parse_args()
+    logging.basicConfig(level=logging.INFO)
     if args.create_db:
         create_db(args)
     if args.load_json:
         load_json(args)
     if args.scrape:
         scrape(args)
+    if args.gui:
+        run()
 
 
 if __name__ == '__main__':

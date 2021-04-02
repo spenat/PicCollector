@@ -1,4 +1,5 @@
 import os
+import logging
 import traceback
 import _tkinter
 import tkinter as tk
@@ -10,27 +11,35 @@ from .options_view import OptionsView
 
 class View:
 
-    thumbs = []
-    page_counter = None
-    image_data = None
-    wait_sign = None
     button_row = 5
     current_image = 0
-    options_view = None
     options = None
+    options_view = None
+    page = 1
+    page_counter = None
+    thumbs = []
+    wait_sign = None
+
+    def __init__(self, root, model, executor, controller):
+        self.logger = logging.getLogger(f'{__name__} {self.__class__}')
+        self.controller = controller
+        self.controller.set_view(self)
+        self.root = root
+        self.model = model
+        self.executor = executor
 
     def setup_view(self):
         next_button = tk.Button(self.root, text="Next", command=self.next_page, height=3, width=10)
         prev_button = tk.Button(self.root, text="Prev", command=self.prev_page, height=3, width=10)
 
         def scrape():
-            self.executor.submit(self.run_spider)
+            self.executor.submit(self.controller.run_spider)
 
         scrape_button = tk.Button(self.root, text="Get pictures", command=scrape, height=1, width=10)
         scrape_button.grid(row=0, column=2)
 
         def set_bg():
-            self.executor.submit(self.set_background)
+            self.executor.submit(self.controller.set_background)
 
         set_bg_button = tk.Button(self.root, text="Set as background", command=set_bg, height=1, width=14)
         set_bg_button.grid(row=0, column=3)
@@ -44,13 +53,10 @@ class View:
         next_button.grid(row=self.button_row,column=3)
         prev_button.grid(row=self.button_row, column=1)
 
-        if self.debug:
-            self.create_debug_text()
-
         self.load_select_list()
         self.setup_page_counter()
         self.setup_statusbar()
-        if len(self.image_data) > 0:
+        if len(self.model.image_data) > 0:
             self.update_thumbs()
         else:
             self.empty_subreddit()
@@ -62,11 +68,11 @@ class View:
     def load_select_list(self):
         if hasattr(self, 'subreddit_select') and self.subreddit_select:
             self.subreddit_select.destroy()
-        select_list = sorted(list(self.subreddits))
-        subreddit_index = select_list.index(self.subreddit) + 1
+        select_list = sorted(list(self.model.subreddits))
+        subreddit_index = select_list.index(self.model.subreddit) + 1
         first_sub = select_list[0]
-        if 'quantity' in self.subreddits[first_sub]:
-            select_list = [s + ' (' + str(self.subreddits[s]['quantity']) + ')' for s in select_list]
+        if 'quantity' in self.model.subreddits[first_sub]:
+            select_list = [s + ' (' + str(self.model.subreddits[s]['quantity']) + ')' for s in select_list]
         select_list = ['Add subreddit'] + select_list
         self.subreddit_select = ttk.Combobox(self.root, values=select_list, state=['readonly'])
         self.subreddit_select.current(newindex=subreddit_index)
@@ -95,10 +101,10 @@ class View:
     def add_subreddit(self, event):
         new_subreddit = event.widget.get()
         self.adder.destroy()
-        filename = self.subreddits_filename
+        filename = self.model.subreddits_filename
         with open(filename, 'a') as fo:
             fo.write(new_subreddit + '\n')
-        self.load_model()
+        self.model.load_model()
         self.load_select_list()
         self.log(f"Added subreddit: {new_subreddit}")
 
@@ -121,18 +127,18 @@ class View:
             self.make_adder()
             return
         subreddit = subreddit.split(' ')[0]
-        self.subreddit = subreddit
+        self.model.subreddit = subreddit
         self.page = 1
 
-        self.log(f'{self.subreddit}')
-        if self.load_imagedata():
+        self.log(f'{self.model.subreddit}')
+        if self.model.load_imagedata():
             self.update_thumbs()
         else:
             self.empty_subreddit()
             self.remove_thumbs()
 
     def next_page(self):
-        if self.page*20 < len(self.image_data):
+        if self.page*20 < len(self.model.image_data):
             self.page += 1
             self.update_thumbs()
 
@@ -144,10 +150,10 @@ class View:
     def setup_page_counter(self):
         if self.page_counter:
             self.page_counter.grid_remove()
-        if not self.image_data:
+        if not self.model.image_data:
             return
-        total_pages = len(self.image_data) // 20
-        if len(self.image_data) % 20 != 0:
+        total_pages = len(self.model.image_data) // 20
+        if len(self.model.image_data) % 20 != 0:
             total_pages += 1
         page_text = f' of {total_pages}'
         page_counter = tk.Frame(self.root)
@@ -179,11 +185,11 @@ class View:
         self.remove_thumbs()
         page = self.page
         tpp = 20 # thumbs per page 20
-        tpr = 5 # thumbs per row 5
-        if (page * tpp < len(self.image_data)):
-            image_data = self.image_data[(page - 1)*tpp:page*tpp]
-        elif ((page - 1)*tpp < len(self.image_data)):
-            image_data = self.image_data[(page - 1)*tpp:page*tpp]
+        tpr = 5  # thumbs per row 5
+        if (page * tpp < len(self.model.image_data)):
+            image_data = self.model.image_data[(page - 1)*tpp:page*tpp]
+        elif ((page - 1)*tpp < len(self.model.image_data)):
+            image_data = self.model.image_data[(page - 1)*tpp:page*tpp]
         else:
             return
         for image_meta in image_data:
@@ -199,10 +205,10 @@ class View:
             if len(image_meta['images']) > 0:
                 image_path = image_meta['images'][0]['path']
                 thumb_path = os.path.join('thumbs/small/', image_path.split('/')[-1])
-                img_path = os.path.join(self.images_dir, thumb_path)
-                full_image = os.path.join(self.images_dir, image_path)
+                img_path = os.path.join(self.model.images_dir, thumb_path)
+                full_image = os.path.join(self.model.images_dir, image_path)
             else:
-                img_path = os.path.join(self.root_directory, 'pic_collector/not-found.gif')
+                img_path = os.path.join(self.model.root_directory, 'pic_collector/not-found.gif')
                 if len(image_meta['image_urls']) > 0:
                     full_image = image_meta['image_urls'][0]
                 else:
@@ -216,7 +222,7 @@ class View:
         except Exception as exc:
             self.log(f'exception in img_path: {exc}')
             self.log(traceback.format_exc())
-            img_path = os.path.join(self.root_directory, 'pic_collector/not-found.gif')
+            img_path = os.path.join(self.model.root_directory, 'pic_collector/not-found.gif')
             image = Image.open(img_path)
         render = ImageTk.PhotoImage(image)
         thumb = tk.Label(self.root, image=render, width=240, height=150, bg='#999999', relief=tk.RAISED)
@@ -228,7 +234,7 @@ class View:
                 status_text = f'Full image: {fi} (Click to open)\nDescription: {d}'
                 self.set_statusbar_text(status_text)
             return mouseover
-        current_index = self.image_data.index(image_meta)
+        current_index = self.model.image_data.index(image_meta)
         def click_():
             fi = full_image
             i = image_meta
@@ -237,7 +243,7 @@ class View:
                 self.log(event)
                 def c():
                     self.current_image = ci
-                    self.open_image(fi)
+                    self.controller.open_image(fi)
                 self.executor.submit(c)
             return click
         if full_image != "Missing url":
@@ -247,13 +253,10 @@ class View:
 
     def show_options(self):
         if not self.options_view:
-            options_view = OptionsView(self.root, self.root_directory, self.load_options)
+            options_view = OptionsView(self.root, self.model.root_directory, self.model.load_options)
             self.options_view = options_view
         elif not self.options_view.options_window:
             self.options_view.setup_view()
 
-    def log(self, log_str):
-        if self.debug:
-            print(f'{self.__class__} : {log_str}')
-        if hasattr(self, 'debug_text'):
-            self.debug_text.insert('@0,0', f'{log_str}\n')
+    def log(self, text):
+        self.logger.info(text)
