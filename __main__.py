@@ -2,7 +2,8 @@ import argparse
 import logging
 import os
 
-from db import database_manager, utils
+from db import utils
+from db import database_manager
 from db.gui_model import Model as DBModel
 from gui.controller import Controller
 from gui.model import Model

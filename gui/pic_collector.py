@@ -17,11 +17,6 @@ root_directory = Path(__file__).parent.parent
 
 
 class PicCollector:
-
-    # controller = Controller()
-    # model = Model()
-    # view = View()
-
     def __init__(self, root, executor, root_directory):
         self.root_directory = root_directory
         self.model = Model(root_directory)
@@ -32,11 +27,11 @@ class PicCollector:
         self.model.load_imagedata()
         self.view.setup_view()
 
+
 def run():
     root = tk.Tk()
 
     with ThreadPoolExecutor(max_workers=60) as executor:
         print(f'root_directory: {root_directory}')
-        piccollector = PicCollector(root, executor,
-                                    root_directory)
+        piccollector = PicCollector(root, executor, root_directory)
         root.mainloop()

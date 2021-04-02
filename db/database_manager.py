@@ -1,11 +1,12 @@
-import os
 import json
+import os
 import traceback
 
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, scoped_session
+from sqlalchemy.orm import scoped_session, sessionmaker
+
 from . import utils
-from .database_model import Subreddit, Picture
+from .database_model import Picture, Subreddit
 
 # This is the database manager. Its a collection of useful database queries
 

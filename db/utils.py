@@ -1,10 +1,11 @@
 import os
 import traceback
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from .database_model import Subreddit, Base
-from .gui_model import Model
 
+from .database_model import Base, Subreddit
+from .gui_model import Model
 
 dburl = Model.load_dburl()
 
