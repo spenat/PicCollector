@@ -7,7 +7,6 @@ from gui.controller import Controller
 from gui.view import View
 from db import utils
 
-
 # if utils.database_exist(os.path.dirname(os.path.realpath(__file__))):
 from db.gui_model import Model
 # else:
@@ -26,6 +25,16 @@ class PicCollector:
         self.model.load_model()
         self.model.load_imagedata()
         self.view.setup_view()
+
+
+class PicConsole:
+    def __init__(self, model, controller):
+        self.model = model
+        self.controller = controller
+        self.model.load_model()
+
+    def scrape_site(self, subreddit):
+        self.controller.scrape_site(subreddit)
 
 
 def run():

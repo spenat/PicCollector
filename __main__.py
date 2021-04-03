@@ -7,7 +7,7 @@ from db import database_manager
 from db.gui_model import Model as DBModel
 from gui.controller import Controller
 from gui.model import Model
-from gui.pic_collector import run
+from gui.pic_collector import run, PicConsole
 
 DBNAME = 'db/pcdb.sqlite'
 cdir = os.path.dirname(os.path.realpath(__file__))
@@ -26,16 +26,12 @@ def scrape(args):
     else:
         subreddits = load_subreddits(args)
 
-    class PicConsole(DBModel, Controller):
-        def __init__(self):
-            self.root_directory = cdir
-            super().__init__()
-            self.load_model()
-
-    ctrl = PicConsole()
+    model = DBModel(cdir)
+    controller = Controller(model)
+    pc = PicConsole(model, controller)
     print(f'Scraping from {subreddits}')
     for subreddit in subreddits:
-        ctrl.scrape_site(subreddit)
+        pc.scrape_site(subreddit)
 
 
 def create_db(args):

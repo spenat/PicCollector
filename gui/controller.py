@@ -13,7 +13,7 @@ class Controller:
 
     slide_running = False
 
-    def __init__(self, model, root):
+    def __init__(self, model, root=None):
         self.logger = logging.getLogger(f'{__name__} {self.__class__}')
         self.model = model
         self.root = root
