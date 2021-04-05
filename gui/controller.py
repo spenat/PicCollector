@@ -32,18 +32,23 @@ class Controller:
         self.view.set_statusbar_text('Scraping done!')
 
     def scrape_site(self, subreddit):
-        json_name = os.path.join(self.model.root_directory, self.model.json_dir)
+        json_name = os.path.join(self.model.root_directory,
+                                 self.model.json_dir)
         time.sleep(3)
-        json_name = os.path.join(json_name, self.model.subreddits[subreddit]['json'])
+        json_name = os.path.join(json_name,
+                                 self.model.subreddits[subreddit]['json'])
         self.log(f'json_name: {json_name}')
         if os.path.isfile(json_name):
             self.log('its a file!\nremoving file {json_name}')
             os.remove(json_name)
-        argument = 'subreddit={}'.format(
+        follow = self.model.options["follow"]
+        sub_argument = 'subreddit={0}'.format(
             self.model.subreddits[subreddit]['url_key'])
-        self.log(argument)
+        follow_argument = 'follow={0}'.format(follow)
+        self.log(sub_argument)
         command_list = [
-            'python', '-m', 'scrapy', 'crawl', 'pics', '-o', json_name, '-a', argument
+            'python', '-m', 'scrapy', 'crawl', 'pics', '-o', json_name, '-a',
+            sub_argument, '-a', follow_argument
         ]
         self.log(command_list)
         proc = sp.run(command_list, cwd=self.model.root_directory)
@@ -55,10 +60,12 @@ class Controller:
                 json_filename = os.path.join(
                     self.model.root_directory, self.model.json_dir,
                     self.model.subreddits[subreddit]['json'])
-                self.model.dbmgr.load_scrape_result_file(json_filename, subreddit)
+                self.model.dbmgr.load_scrape_result_file(
+                    json_filename, subreddit)
                 self.model.subreddits = self.model.dbmgr.get_subreddit_dict()
             except Exception as exc:
-                self.log(f'got exception from load_file: {json_filename} : {exc}')
+                self.log(
+                    f'got exception from load_file: {json_filename} : {exc}')
                 self.log(traceback.format_exc())
 
     def native_viewer_destroyed(self, event):
@@ -73,13 +80,12 @@ class Controller:
         self.slide_running = False
 
     def set_background(self):
-        print(f'self: {self}')
-        path = self.model.image_data[self.view.current_image]['images'][0]['path']
-        print(f'path: {path}')
+        self.log(f'self: {self}')
+        path = self.model.image_data[
+            self.view.current_image]['images'][0]['path']
+        self.log(f'path: {path}')
         full_path = os.path.join(self.model.images_dir, path)
-        command_list = [
-            'feh', '--no-fehbg', '--bg-fill', full_path
-        ]
+        command_list = ['feh', '--no-fehbg', '--bg-fill', full_path]
         self.log(command_list)
         proc = sp.run(command_list, cwd=self.model.root_directory)
         self.log(proc)
@@ -109,7 +115,9 @@ class Controller:
         self.native_viewer.set_image(full_path)
 
     def random_subreddit(self, event):
-        subreddit = list(self.model.subreddits)[random.randint(1, len(self.model.subreddits) - 1)]
+        subreddit = list(self.model.subreddits)[random.randint(
+            1,
+            len(self.model.subreddits) - 1)]
         self.model.subreddit = subreddit
         self.model.load_imagedata()
         self.view.load_select_list()
@@ -127,15 +135,21 @@ class Controller:
             if hasattr(self, 'native_viewer') and self.native_viewer:
                 self.native_viewer.set_image(filename)
             else:
-                self.native_viewer = ImageViewer(self.root, filename, self.model.options)
-                self.native_viewer.viewer_window.bind('<Destroy>', self.native_viewer_destroyed)
-                self.native_viewer.viewer_window.bind('s', self.start_slideshow)
+                self.native_viewer = ImageViewer(self.root, filename,
+                                                 self.model.options)
+                self.native_viewer.viewer_window.bind(
+                    '<Destroy>', self.native_viewer_destroyed)
+                self.native_viewer.viewer_window.bind('s',
+                                                      self.start_slideshow)
                 self.native_viewer.viewer_window.bind('d', self.stop_slideshow)
                 self.native_viewer.viewer_window.bind('n', self.next_image)
-                self.native_viewer.viewer_window.bind('<space>', self.next_image)
+                self.native_viewer.viewer_window.bind('<space>',
+                                                      self.next_image)
                 self.native_viewer.viewer_window.bind('p', self.prev_image)
-                self.native_viewer.viewer_window.bind('<BackSpace>', self.prev_image)
-                self.native_viewer.viewer_window.bind('r', self.random_subreddit)
+                self.native_viewer.viewer_window.bind('<BackSpace>',
+                                                      self.prev_image)
+                self.native_viewer.viewer_window.bind('r',
+                                                      self.random_subreddit)
             return
         elif which(player):
             pass

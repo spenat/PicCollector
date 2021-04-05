@@ -19,7 +19,7 @@ class PicsSpider(CrawlSpider):
 
     def __init__(self, subreddit='pics', follow=False, **kwargs):
         self.start_urls = [f'https://old.reddit.com/r/{subreddit}']
-
+        follow = follow == 'True'
         self.rules = [
             Rule(LinkExtractor(allow=[f'.*/r/{subreddit}/\?count.*']),
                  callback='parse',

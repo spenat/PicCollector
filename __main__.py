@@ -1,6 +1,7 @@
 import argparse
 import logging
 import os
+import pprint
 
 from db import utils
 from db import database_manager
@@ -32,6 +33,14 @@ def scrape(args):
     print(f'Scraping from {subreddits}')
     for subreddit in subreddits:
         pc.scrape_site(subreddit)
+
+
+def show_options():
+    model = DBModel(cdir)
+    model.load_options()
+    options = model.options
+    print(f'Options :')
+    pprint.pprint(options)
 
 
 def create_db(args):
@@ -66,6 +75,8 @@ def main():
         description='PicCollector from command prompt')
     parser.add_argument('--gui', dest='gui', action='store_true',
                         help='Start gui')
+    parser.add_argument('--show-options', dest='show_options', action='store_true',
+                        help='Show options')
     parser.add_argument('--subreddits', dest='subreddits', type=str, nargs='+',
                         help='Subreddits you want to scrape and/or add')
     parser.add_argument('--subreddit-file', dest='subreddit_file', type=str,
@@ -91,6 +102,8 @@ def main():
         scrape(args)
     if args.gui:
         run()
+    if args.show_options:
+        show_options()
 
 
 if __name__ == '__main__':
