@@ -2,6 +2,7 @@ import argparse
 import logging
 import os
 import pprint
+import json
 
 from db import utils
 from db import database_manager
@@ -33,6 +34,59 @@ def scrape(args):
     print(f'Scraping from {subreddits}')
     for subreddit in subreddits:
         pc.scrape_site(subreddit)
+
+
+def generate_cs(filename):
+    return filename[:8]
+
+
+def create_image_data(filename):
+    image_data = {
+        'description': 'orphan-' + filename[:-4],
+        'image_urls': [''],
+        'images': [{
+            'url': '',
+            'path': 'full/' + filename,
+            'checksum': generate_cs(filename),
+            'status': 'downloaded',
+        }]
+    }
+    return image_data
+
+
+def find_orphans(args):
+    model = DBModel(cdir)
+    model.load_model()
+    print(f'model.images_dir: {model.images_dir}')
+    files = os.listdir(model.images_dir + '/full')
+
+    if 'Orphans' not in model.subreddits:
+        print(f'no subreddit : {model.subreddits}')
+        add_subreddit('orphans')
+    nof = len(files)
+    print(f'nof: {nof}')
+    orphans = []
+    for filename in files:
+        result = model.dbmgr.look_for_picture('full/' + filename)
+        if result is None:
+            orphans.append(filename)
+    noo = len(orphans)
+    image_data = []
+    for orphan in orphans:
+        image_data.append(create_image_data(orphan))
+    with open('orphans.json', 'w') as file:
+        json.dump(image_data, file, indent=4)
+    model.dbmgr.load_scrape_result_file('orphans.json', 'Orphans')
+    print(f'Added {noo} orphans')
+
+
+def add_subreddit(url_key):
+    model = DBModel(cdir)
+    subreddit = utils.create_subreddit(url_key)
+    s = model.dbmgr.session()
+    s.add(subreddit)
+    s.commit()
+    s.close()
 
 
 def show_options():
@@ -75,6 +129,8 @@ def main():
         description='PicCollector from command prompt')
     parser.add_argument('--gui', dest='gui', action='store_true',
                         help='Start gui')
+    parser.add_argument('--orphans', dest='orphans', action='store_true',
+                        help='Find orphans')
     parser.add_argument('--show-options', dest='show_options', action='store_true',
                         help='Show options')
     parser.add_argument('--subreddits', dest='subreddits', type=str, nargs='+',
@@ -102,6 +158,8 @@ def main():
         scrape(args)
     if args.gui:
         run()
+    if args.orphans:
+        find_orphans(args)
     if args.show_options:
         show_options()
 
