@@ -2,6 +2,7 @@
     "viewer": "native",
     "viewer_alts": ["feh", "gqview", "native", "eog", "geeqie"],
     "storage": "default",
+    "follow": "False",
     "viewerOptions":
         {
          "width": 1920,

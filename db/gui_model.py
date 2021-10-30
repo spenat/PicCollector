@@ -1,25 +1,28 @@
-import os
 import json
-
-from .database_manager import DatabaseManager
+import logging
+import os
 
 from pic_collector import settings
+
+from .database_manager import DatabaseManager
 
 
 class Model:
 
+    db_directory = os.path.dirname(os.path.realpath(__file__)) + '/'
+    db_type = "sqlite"
+    dburl_file = "dburl.json"
+    debug = False
+    image_data = {}
+    images_dir = settings.IMAGES_STORE
+    json_dir = os.path.join('pic_collector', 'json_files')
+    options_file = 'options.json'
     page = 1
     subreddit = 'pics'
-    image_data = {}
-    db_directory = os.path.dirname(os.path.realpath(__file__)) + '/'
-    debug = False
-    json_dir = os.path.join('pic_collector', 'json_files')
-    dburl_file = "dburl.json"
-    db_type = "sqlite"
-    options_file = 'options.json'
-    images_dir = settings.IMAGES_STORE
 
-    def __init__(self):
+    def __init__(self, root_directory):
+        self.root_directory = root_directory
+        self.logger = logging.getLogger(f'{__name__} {self.__class__}')
         self.subreddits_filename = os.path.join(self.root_directory, 'config',
                                                 "subreddits.cfg")
         self.options_file = os.path.join(self.root_directory, 'config',
@@ -65,8 +68,7 @@ class Model:
             self.options = json.load(file)
 
     def log(self, text):
-        print(f'log : {text}')
-        # pass
+        self.logger.info(text)
 
     @classmethod
     def load_dburl(cls):

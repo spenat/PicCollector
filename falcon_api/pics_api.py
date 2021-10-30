@@ -1,11 +1,12 @@
 import os
-import falcon
 from pathlib import Path
+
+import falcon
 from falcon_cors import CORS
-from db import utils
-from db import database_manager
-from gui.controller import Controller
+
+from db import database_manager, utils
 from db.gui_model import Model as DBModel
+from gui.controller import Controller
 
 
 class Subreddit:

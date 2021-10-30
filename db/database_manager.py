@@ -1,11 +1,12 @@
-import os
 import json
+import os
 import traceback
 
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, scoped_session
+from sqlalchemy.orm import scoped_session, sessionmaker
+
 from . import utils
-from .database_model import Subreddit, Picture
+from .database_model import Picture, Subreddit
 
 # This is the database manager. Its a collection of useful database queries
 
@@ -50,12 +51,13 @@ class DatabaseManager():
             Picture.subreddit_id == subreddit.id).count()
         return quantity
 
-    def load_scrape_result_file(self, filename, subreddit):
-        with open(filename, 'r') as file:
-            image_data = json.load(file)
+    def look_for_picture(self, filename):
         s = self.session()
-        subreddit = s.query(Subreddit).filter(
-            Subreddit.name == subreddit).one_or_none()
+        file_query = s.query(Picture).filter(Picture.path == filename)
+        return file_query.one_or_none()
+
+    def create_pictures(self, image_data, subreddit):
+        s = self.session()
         pictures = []
         checksums = []
         for image in image_data:
@@ -79,6 +81,16 @@ class DatabaseManager():
             except Exception as exc:
                 print(f'Got exception when adding file: {filename} : {exc}')
                 traceback.print_exception()
-        s.add_all(pictures)
+        print(f'pictures: {pictures}')
+        return pictures
+
+
+    def load_scrape_result_file(self, filename, subreddit_name):
+        with open(filename, 'r') as file:
+            image_data = json.load(file)
+        s = self.session()
+        subreddit = s.query(Subreddit).filter(
+            Subreddit.name == subreddit_name).one_or_none()
+        s.add_all(self.create_pictures(image_data, subreddit))
         s.commit()
         s.close()

@@ -43,7 +43,7 @@
 
 ## About The Project
 
-Collect images from reddit and catalog them with description scraped from the site.
+Collect images from reddit and catalog them with descriptions scraped from the site.
 I.e. get all the wallpapers from [Wallpapers](http://reddit.com/r/wallpapers).
 Add any subreddit to your list and take home all the pictures.
 
@@ -66,7 +66,11 @@ To get a local copy up and running follow these simple steps.
 
 ### Prerequisites
 
-This is an example of how to list things you need to use the software and how to install them.
+Install software needed to run PicCollector
+
+* Install Python 3.x with tk/tcl support: [Python](https://www.python.org/downloads/)
+
+* Get [pip](https://pip.pypa.io/en/stable/installing/)
 
 * pip
   * Create virtual environment (optional)

@@ -1,7 +1,8 @@
 import scrapy
 from scrapy.http import Request
-from scrapy.spiders import CrawlSpider, Rule
 from scrapy.linkextractors import LinkExtractor
+from scrapy.spiders import CrawlSpider, Rule
+
 from ..items import PicCollectorItem
 
 cookie = {
@@ -16,13 +17,13 @@ class PicsSpider(CrawlSpider):
     name = 'pics'
     allowed_domains = ['old.reddit.com', 'imgur.com']
 
-    def __init__(self, subreddit='pics', **kwargs):
+    def __init__(self, subreddit='pics', follow=False, **kwargs):
         self.start_urls = [f'https://old.reddit.com/r/{subreddit}']
-
+        follow = follow == 'True'
         self.rules = [
             Rule(LinkExtractor(allow=[f'.*/r/{subreddit}/\?count.*']),
                  callback='parse',
-                 follow=True),
+                 follow=follow),
         ]
         super(PicsSpider, self).__init__(**kwargs)
 
@@ -45,6 +46,4 @@ class PicsSpider(CrawlSpider):
         urls = []
         for a in links:
             url = a.attrib['href']
-            yield Request(url,
-                          callback=self.parse_commentpage,
-                          cookies=cookie)
+            yield Request(url, callback=self.parse_commentpage, cookies=cookie)
