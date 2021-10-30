@@ -32,7 +32,7 @@ def scrape(args):
     model = DBModel(cdir)
     controller = Controller(model)
     pc = PicConsole(model, controller)
-    logger.INFO(f'Scraping from {subreddits}')
+    logger.info(f'Scraping from {subreddits}')
     for subreddit in subreddits:
         pc.scrape_site(subreddit)
 
@@ -58,14 +58,14 @@ def create_image_data(filename):
 def find_orphans(args):
     model = DBModel(cdir)
     model.load_model()
-    logger.INFO(f'model.images_dir: {model.images_dir}')
+    logger.info(f'model.images_dir: {model.images_dir}')
     files = os.listdir(model.images_dir + '/full')
 
     if 'Orphans' not in model.subreddits:
-        logger.INFO(f'no subreddit : {model.subreddits}')
+        logger.info(f'no subreddit : {model.subreddits}')
         add_subreddit('orphans')
     nof = len(files)
-    logger.INFO(f'nof: {nof}')
+    logger.info(f'nof: {nof}')
     orphans = []
     for filename in files:
         result = model.dbmgr.look_for_picture('full/' + filename)
@@ -78,7 +78,7 @@ def find_orphans(args):
     with open('orphans.json', 'w') as file:
         json.dump(image_data, file, indent=4)
     model.dbmgr.load_scrape_result_file('orphans.json', 'Orphans')
-    logger.INFO(f'Added {noo} orphans')
+    logger.info(f'Added {noo} orphans')
 
 
 def add_subreddit(url_key):
@@ -99,20 +99,20 @@ def show_options():
 
 
 def create_db(args):
-    logger.INFO('Creating db')
+    logger.info('Creating db')
     dbfilename = os.path.join(cdir, args.dbname)
     if os.path.exists(dbfilename):
-        logger.INFO(f'{dbfilename} already exists')
+        logger.info(f'{dbfilename} already exists')
         overwrite = input('overwrite it? (y/n): ')
         if overwrite not in ['y', 'Y']:
             return
-        logger.INFO(f'deleting {dbfilename}')
+        logger.info(f'deleting {dbfilename}')
         os.remove(dbfilename)
     utils.create_database()
 
 
 def load_json(args):
-    logger.INFO('Loading json files')
+    logger.info('Loading json files')
     json_dir = os.path.join(cdir, 'pic_collector', 'json_files')
     dburl = DBModel.load_dburl().format(DBModel.db_directory)
     config_dir = os.path.join(cdir, 'config')
